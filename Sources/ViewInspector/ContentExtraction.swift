@@ -145,6 +145,10 @@ public extension View {
             throw InspectionError
                 .missingEnvironmentObjects(view: view, objects: missingObjects)
         }
+        if ViewInspectorConfig.resolveEnvironmentValues {
+            let env = EnvironmentInjection.environmentValues(from: environmentValues)
+            copy = EnvironmentInjection.resolveEnvironmentProperties(in: copy, using: env)
+        }
         return copy.body
     }
 }
@@ -170,6 +174,10 @@ public extension ViewModifier {
         }
         guard copy.hasBody else {
             return "<Never>"
+        }
+        if ViewInspectorConfig.resolveEnvironmentValues {
+            let env = EnvironmentInjection.environmentValues(from: environmentValues)
+            copy = EnvironmentInjection.resolveEnvironmentProperties(in: copy, using: env)
         }
         return copy.body()
     }
