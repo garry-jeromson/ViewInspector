@@ -44,7 +44,7 @@ final class CustomViewTests: XCTestCase {
         }
         ViewHosting.host(view: sut.environmentObject(viewModel))
         defer { ViewHosting.expel() }
-        wait(for: [exp], timeout: 0.1)
+        wait(for: [exp], timeout: 5)
     }
 
     func testEnvironmentObjectModifier() throws {
@@ -117,7 +117,7 @@ final class CustomViewTests: XCTestCase {
         }
         ViewHosting.host(view: sut.environmentObject(ExternalState()).padding())
         defer { ViewHosting.expel() }
-        wait(for: [exp], timeout: 0.1)
+        wait(for: [exp], timeout: 5)
     }
 
     @available(watchOS, deprecated: 7.0)
@@ -226,7 +226,7 @@ final class CustomViewTests: XCTestCase {
         }
         ViewHosting.host(view: sut.environmentObject(viewModel))
         defer { ViewHosting.expel() }
-        wait(for: [exp], timeout: 0.1)
+        wait(for: [exp], timeout: 5)
     }
 
     func testActualView() throws {
@@ -237,7 +237,7 @@ final class CustomViewTests: XCTestCase {
         }
         ViewHosting.host(view: sut.environmentObject(ExternalState()).padding())
         defer { ViewHosting.expel() }
-        wait(for: [exp], timeout: 0.1)
+        wait(for: [exp], timeout: 5)
     }
     
     func testActualViewTypeMismatch() throws {

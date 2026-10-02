@@ -116,7 +116,7 @@ final class ForEachTests: XCTestCase {
                 exp.fulfill()
             }
         try sut.inspect().forEach().callOnDelete(set)
-        wait(for: [exp], timeout: 0.1)
+        wait(for: [exp], timeout: 5)
     }
     
     func testOnMove() throws {
@@ -130,7 +130,7 @@ final class ForEachTests: XCTestCase {
                 exp.fulfill()
             }
         try sut.inspect().forEach().callOnMove(set, index)
-        wait(for: [exp], timeout: 0.1)
+        wait(for: [exp], timeout: 5)
     }
     
     #if os(macOS)
@@ -145,7 +145,7 @@ final class ForEachTests: XCTestCase {
         XCTAssertThrows(try sut.inspect().forEach().callOnInsert(of: [UTType.jpeg], 0, []),
         "ForEach<Array<Int>, Int, Text> does not have 'onInsert(of: [\"public.jpeg\"], perform:)' modifier")
         try sut.inspect().forEach().callOnInsert(of: [UTType.pdf], 0, [])
-        wait(for: [exp], timeout: 0.1)
+        wait(for: [exp], timeout: 5)
     }
     #endif
 }

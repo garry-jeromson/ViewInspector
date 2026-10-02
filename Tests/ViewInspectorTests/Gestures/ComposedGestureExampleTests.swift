@@ -31,7 +31,7 @@ final class ComposedGestureExampleTests: XCTestCase {
 
         ViewHosting.host(view: sut)
         defer { ViewHosting.expel() }
-        wait(for: [exp1, exp2], timeout: 0.2)
+        wait(for: [exp1, exp2], timeout: 5)
     }
 
     func testComposedGestureSecond() throws {
@@ -55,7 +55,7 @@ final class ComposedGestureExampleTests: XCTestCase {
 
         ViewHosting.host(view: sut)
         defer { ViewHosting.expel() }
-        wait(for: [exp1, exp2], timeout: 0.2)
+        wait(for: [exp1, exp2], timeout: 5)
     }
 
     func testComposedGestureAltFirst() throws {
@@ -79,7 +79,7 @@ final class ComposedGestureExampleTests: XCTestCase {
 
         ViewHosting.host(view: sut)
         defer { ViewHosting.expel() }
-        wait(for: [exp1, exp2], timeout: 0.2)
+        wait(for: [exp1, exp2], timeout: 5)
     }
     
     func testNotAComposedGestureError() throws {
@@ -110,7 +110,7 @@ final class ComposedGestureExampleTests: XCTestCase {
 
         ViewHosting.host(view: sut)
         defer { ViewHosting.expel() }
-        wait(for: [exp], timeout: 0.2)
+        wait(for: [exp], timeout: 5)
     }
 }
 

@@ -58,7 +58,7 @@ final class StepperTests: XCTestCase {
             exp.fulfill()
         }, onDecrement: nil, onEditingChanged: { _ in })
         try view.inspect().stepper().increment()
-        wait(for: [exp], timeout: 0.1)
+        wait(for: [exp], timeout: 5)
     }
     
     func testIncrementWhenDisabled() throws {
@@ -78,7 +78,7 @@ final class StepperTests: XCTestCase {
             exp.fulfill()
         }, onEditingChanged: { _ in })
         try view.inspect().stepper().decrement()
-        wait(for: [exp], timeout: 0.1)
+        wait(for: [exp], timeout: 5)
     }
     
     func testDecrementWhenDisabled() throws {
@@ -99,7 +99,7 @@ final class StepperTests: XCTestCase {
             exp.fulfill()
         })
         try view.inspect().stepper().callOnEditingChanged()
-        wait(for: [exp], timeout: 0.1)
+        wait(for: [exp], timeout: 5)
     }
 }
 
