@@ -141,9 +141,7 @@ private extension InspectionEmissary {
     ) -> XCTestExpectation {
         let exp = XCTestExpectation(description: "Inspection at line \(line)")
         setup(inspection: inspection, expectation: exp, function: function, file: file, line: line)
-        DispatchQueue.main.asyncAfter(deadline: .now() + delay) { [weak notice] in
-            notice?.send(line)
-        }
+        deliverNotice(line, after: delay)
         return exp
     }
     
@@ -164,11 +162,9 @@ private extension InspectionEmissary {
         setup(inspection: inspection, expectation: exp, function: function, file: file, line: line)
         var subscription: AnyCancellable?
         _ = subscription
-        subscription = publisher.sink { [weak notice] _ in
+        subscription = publisher.sink { [weak self] _ in
             subscription = nil
-            DispatchQueue.main.asyncAfter(deadline: .now() + delay) { [weak notice] in
-                notice?.send(line)
-            }
+            self?.deliverNotice(line, after: delay)
         }
         return exp
     }
@@ -184,6 +180,20 @@ private extension InspectionEmissary {
         try await setup(inspection: inspection, delay: delay, function: function, file: file, line: line)
     }
     
+    /// Sends the notice for the inspection at `line`. A view that hasn't rendered yet isn't
+    /// subscribed to `notice` and would miss it, so it's re-sent until the callback is consumed.
+    nonisolated func deliverNotice(_ line: UInt, after delay: TimeInterval, attempts: Int = 200) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + delay) { [weak self] in
+            MainActor.assumeIsolated {
+                guard let self, self.callbacks[line] != nil else { return }
+                self.notice.send(line)
+                if attempts > 1 {
+                    self.deliverNotice(line, after: 0.05, attempts: attempts - 1)
+                }
+            }
+        }
+    }
+
     func setup(inspection: @escaping SubjectInspection,
                expectation: XCTestExpectation,
                function: String, file: StaticString, line: UInt) {
@@ -224,7 +234,7 @@ private extension InspectionEmissary {
                 }
                 let clock = SuspendingClock()
                 try await clock.sleep(until: clock.now + delay)
-                notice.send(line)
+                deliverNotice(line, after: 0)
             }
         }
     }
