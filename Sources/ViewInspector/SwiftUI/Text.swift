@@ -222,14 +222,22 @@ private extension ViewType.Text {
             .attribute(label: "bundle", value: localizedTextStorage, type: Bundle.self)
         let table = try? Inspector
             .attribute(label: "table", value: localizedTextStorage, type: String?.self)
-        let localized = (bundle ?? Bundle.main)?
-            .path(forResource: locale.identifier
-                    .replacingOccurrences(of: "_", with: "-"),
-                  ofType: "lproj").flatMap({ Bundle(path: $0) })?
+        let localized = localizationBundle(in: bundle ?? Bundle.main, locale: locale)?
             .localizedString(forKey: format, value: format, table: table) ?? format
         guard hasFormatting else { return localized }
         let arguments = try formattingArguments(stringContainer, locale: locale)
         return String(format: localized, arguments: arguments)
+    }
+    
+    /// The `.lproj` bundle for the locale. The folder name is matched case-insensitively,
+    /// because SwiftPM lowercases the localization folders (`en-AU.lproj` -> `en-au.lproj`).
+    private static func localizationBundle(in bundle: Bundle, locale: Locale) -> Bundle? {
+        let name = locale.identifier.replacingOccurrences(of: "_", with: "-")
+        let localization = bundle.path(forResource: name, ofType: "lproj") != nil ? name
+            : bundle.localizations.first(where: { $0.caseInsensitiveCompare(name) == .orderedSame })
+        return localization
+            .flatMap { bundle.path(forResource: $0, ofType: "lproj") }
+            .flatMap { Bundle(path: $0) }
     }
     
     private static func formattingArguments(_ container: Any, locale: Locale) throws -> [CVarArg] {
