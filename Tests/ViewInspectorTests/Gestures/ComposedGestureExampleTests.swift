@@ -10,6 +10,11 @@ import Combine
 @available(watchOS, unavailable)
 final class ComposedGestureExampleTests: XCTestCase {
 
+    nonisolated override class func setUp() {
+        super.setUp()
+        MainActor.assumeIsolated { HostingWarmUp.perform() }
+    }
+
     func testComposedGestureFirst() throws {
         let sut = TestGestureView10()
         let exp1 = sut.inspection.inspect { view in

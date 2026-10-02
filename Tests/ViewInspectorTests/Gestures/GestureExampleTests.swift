@@ -10,6 +10,11 @@ import Combine
 @available(tvOS, unavailable)
 final class GestureExampleTests: XCTestCase {
 
+    nonisolated override class func setUp() {
+        super.setUp()
+        MainActor.assumeIsolated { HostingWarmUp.perform() }
+    }
+
     func testGestureModifier() throws {
         guard #available(iOS 14.0, tvOS 16.0, *) else { throw XCTSkip() }
         let sut = TestGestureView1()
