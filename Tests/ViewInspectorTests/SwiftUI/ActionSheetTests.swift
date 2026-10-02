@@ -139,7 +139,7 @@ final class ActionSheetTests: XCTestCase {
         XCTAssertTrue(binding.wrappedValue)
         try sut.inspect().implicitAnyView().emptyView().actionSheet().button(0).tap()
         XCTAssertFalse(binding.wrappedValue)
-        wait(for: [exp], timeout: 5)
+        wait(for: [exp], timeout: 0.1)
     }
     
     func testActionSheetWithItem() throws {

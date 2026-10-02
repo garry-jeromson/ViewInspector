@@ -20,7 +20,7 @@ final class ViewEventsTests: XCTestCase {
             exp.fulfill()
         }.padding().onDisappear(perform: { })
         try sut.inspect().emptyView().callOnAppear()
-        wait(for: [exp], timeout: 5)
+        wait(for: [exp], timeout: 0.1)
     }
     
     func testOnDisappear() throws {
@@ -35,7 +35,7 @@ final class ViewEventsTests: XCTestCase {
                 exp.fulfill()
             }.padding()
         try sut.inspect().emptyView().callOnDisappear()
-        wait(for: [exp], timeout: 5)
+        wait(for: [exp], timeout: 0.1)
     }
 
     func testOnChange() throws {
@@ -58,7 +58,7 @@ final class ViewEventsTests: XCTestCase {
         }.padding()
         try sut.inspect().emptyView()
             .callOnChange(newValue: Inspector.TestValue(value: "expected"))
-        wait(for: [exp], timeout: 5)
+        wait(for: [exp], timeout: 0.1)
     }
 
     func testOnChangeInitial() throws {
@@ -79,7 +79,7 @@ final class ViewEventsTests: XCTestCase {
         }.padding()
         try sut.inspect().emptyView()
             .callOnChange(oldValue: val, newValue: Inspector.TestValue(value: "expected"))
-        wait(for: [exp], timeout: 5)
+        wait(for: [exp], timeout: 0.1)
     }
 
     func testOnChangeOldValueNewValue() throws {
@@ -105,7 +105,7 @@ final class ViewEventsTests: XCTestCase {
                 oldValue: Inspector.TestValue(value: "initial"),
                 newValue: Inspector.TestValue(value: "expected")
             )
-        wait(for: [exp], timeout: 5)
+        wait(for: [exp], timeout: 0.1)
     }
 
     func testMultipleOnChangeModifiersSameTypeCallFirst() throws {
@@ -123,7 +123,7 @@ final class ViewEventsTests: XCTestCase {
         }.padding()
         val = "expected"
         try sut.inspect().emptyView().callOnChange(newValue: val)
-        wait(for: [exp], timeout: 5)
+        wait(for: [exp], timeout: 0.1)
     }
 
     func testMultipleOnChangeModifiersSameTypeCallByIndex() throws {
@@ -143,7 +143,7 @@ final class ViewEventsTests: XCTestCase {
         try sut.inspect().emptyView().callOnChange(newValue: val, index: 1)
         XCTAssertThrows(try sut.inspect().emptyView().callOnChange(newValue: val, index: 2),
                         "EmptyView does not have 'onChange' modifier at index 2")
-        wait(for: [exp], timeout: 5)
+        wait(for: [exp], timeout: 0.1)
     }
     
     func testMultipleOnChangeModifiersDifferentTypes() throws {
@@ -161,7 +161,7 @@ final class ViewEventsTests: XCTestCase {
         }.padding()
         try sut.inspect().emptyView().callOnChange(newValue: "abc")
         try sut.inspect().emptyView().callOnChange(newValue: 5)
-        wait(for: [exp1, exp2], timeout: 5)
+        wait(for: [exp1, exp2], timeout: 0.1)
     }
     
     func testOnSubmit() throws {
@@ -187,7 +187,7 @@ final class ViewEventsTests: XCTestCase {
             })
         try sut.inspect().callOnSubmit(of: .text)
         try sut.inspect().callOnSubmit(of: .search)
-        wait(for: [expSearch, expText], timeout: 5)
+        wait(for: [expSearch, expText], timeout: 0.1)
     }
 
     func testRefreshable() throws {
@@ -203,7 +203,7 @@ final class ViewEventsTests: XCTestCase {
             exp.fulfill()
         }.padding().onDisappear(perform: { })
         try await sut.inspect().emptyView().callRefreshable()
-        await fulfillment(of: [exp], timeout: 5)
+        await fulfillment(of: [exp], timeout: 0.1)
     }
 
     func testTask() throws {
@@ -219,7 +219,7 @@ final class ViewEventsTests: XCTestCase {
             exp.fulfill()
         }.padding().onDisappear(perform: { })
         try await sut.inspect().emptyView().callTask()
-        await fulfillment(of: [exp], timeout: 5)
+        await fulfillment(of: [exp], timeout: 0.1)
     }
 
     func testTaskIdInspection() async throws {
@@ -230,7 +230,7 @@ final class ViewEventsTests: XCTestCase {
                 exp.fulfill()
             }
         try await sut.inspect().emptyView().callTask(id: "id")
-        await fulfillment(of: [exp], timeout: 5)
+        await fulfillment(of: [exp], timeout: 0.1)
     }
 
     func testTaskIdInspectionWithIndex() async throws {
@@ -249,10 +249,10 @@ final class ViewEventsTests: XCTestCase {
             }
 
         try await sut.inspect().emptyView().callTask(id: "id1", index: 0)
-        await fulfillment(of: [exp1], timeout: 5)
+        await fulfillment(of: [exp1], timeout: 0.1)
 
         try await sut.inspect().emptyView().callTask(id: "id2", index: 1)
-        await fulfillment(of: [exp2], timeout: 5)
+        await fulfillment(of: [exp2], timeout: 0.1)
     }
 
     func testTaskIdInspectionMultipleDifferentTypes() async throws {
@@ -282,7 +282,7 @@ final class ViewEventsTests: XCTestCase {
         _ = try await sut.inspect().emptyView().callTask(id: "id")
         _ = try await sut.inspect().emptyView().callTask(id: CustomEquatableStruct(value: 1))
 
-        await fulfillment(of: [exp1, exp2, exp3], timeout: 5)
+        await fulfillment(of: [exp1, exp2, exp3], timeout: 0.1)
     }
 }
 
@@ -318,7 +318,7 @@ final class ViewScrollEventsTests: XCTestCase {
         let text = try sut.inspect().find(text: "abc")
         try text.callOnScrollVisibilityChange(true)
         try text.callOnScrollVisibilityChange(false)
-        wait(for: [exp1, exp2], timeout: 5)
+        wait(for: [exp1, exp2], timeout: 0.1)
     }
 
     func testOnScrollVisibilityChangeArgumentDelivery() throws {

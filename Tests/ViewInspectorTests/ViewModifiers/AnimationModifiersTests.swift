@@ -34,6 +34,6 @@ final class ViewAnimationsTests: XCTestCase {
             exp.fulfill()
         }
         try sut.inspect().emptyView().callTransaction()
-        wait(for: [exp], timeout: 5)
+        wait(for: [exp], timeout: 0.1)
     }
 }

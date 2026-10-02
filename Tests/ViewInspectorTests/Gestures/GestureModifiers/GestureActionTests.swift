@@ -21,7 +21,7 @@ final class ViewGestureActionTests: XCTestCase {
             exp.fulfill()
         }.onLongPressGesture { }
         try sut.inspect().emptyView().callOnTapGesture()
-        wait(for: [exp], timeout: 5)
+        wait(for: [exp], timeout: 0.1)
     }
     
     func testOnLongPressGesture() throws {
@@ -35,7 +35,7 @@ final class ViewGestureActionTests: XCTestCase {
             exp.fulfill()
         }.onTapGesture { }
         try sut.inspect().emptyView().callOnLongPressGesture()
-        wait(for: [exp], timeout: 5)
+        wait(for: [exp], timeout: 0.1)
     }
     #endif
 }

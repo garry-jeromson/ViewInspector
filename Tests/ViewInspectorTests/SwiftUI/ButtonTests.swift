@@ -160,7 +160,7 @@ final class ButtonStyleInspectionTests: XCTestCase {
         }
         ViewHosting.host(view: view)
         defer { ViewHosting.expel() }
-        wait(for: [exp, triggerExp], timeout: 5)
+        wait(for: [exp, triggerExp], timeout: 0.3)
     }
     #endif
 }

@@ -138,7 +138,7 @@ final class DeprecatedAlertTests: XCTestCase {
         XCTAssertTrue(binding.wrappedValue)
         try sut.inspect().implicitAnyView().emptyView().alert().primaryButton().tap()
         XCTAssertFalse(binding.wrappedValue)
-        wait(for: [exp], timeout: 5)
+        wait(for: [exp], timeout: 0.1)
     }
     
     func testTapOnSecondaryButtonWithoutCallback() throws {
@@ -164,7 +164,7 @@ final class DeprecatedAlertTests: XCTestCase {
         XCTAssertTrue(binding.wrappedValue)
         try sut.inspect().implicitAnyView().emptyView().alert().secondaryButton().tap()
         XCTAssertFalse(binding.wrappedValue)
-        wait(for: [exp], timeout: 5)
+        wait(for: [exp], timeout: 0.1)
     }
     
     func testAlertButtonStyle() throws {

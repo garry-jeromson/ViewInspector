@@ -67,7 +67,7 @@ final class GestureExampleTests: XCTestCase {
 
         ViewHosting.host(view: sut)
         defer { ViewHosting.expel() }
-        wait(for: [exp1, exp2], timeout: 5)
+        wait(for: [exp1, exp2], timeout: 0.1)
     }
 
     func testTestGestureChanged() throws {
@@ -89,7 +89,7 @@ final class GestureExampleTests: XCTestCase {
 
         ViewHosting.host(view: sut)
         defer { ViewHosting.expel() }
-        wait(for: [exp1, exp2], timeout: 5)
+        wait(for: [exp1, exp2], timeout: 0.1)
     }
 
     func testTestGestureEnded() throws {
@@ -112,7 +112,7 @@ final class GestureExampleTests: XCTestCase {
 
         ViewHosting.host(view: sut)
         defer { ViewHosting.expel() }
-        wait(for: [exp1, exp2], timeout: 5)
+        wait(for: [exp1, exp2], timeout: 0.1)
     }
     
     #if os(macOS)
