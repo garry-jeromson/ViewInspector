@@ -6,34 +6,47 @@ on:
 
 jobs:
   test:
-    name: ${{ matrix.platform }} (${{ matrix.ref }})
+    name: ${{ matrix.runner }} (${{ matrix.ref }})
     runs-on: macos-26
     strategy:
       fail-fast: false
       matrix:
         ref: [head, base-0.10.5]
-        platform: [macOS, iOS]
+        runner: [swiftpm-macOS, xcode-macOS, xcode-iOS]
     steps:
       - uses: actions/checkout@v4
         with:
           ref: ${{ matrix.ref == 'head' && github.sha || '2dacb6e514be19379c605a5a11564d0f3fea89d9' }}
       - name: Toolchain
         run: |
-          ls -d /Applications/Xcode*.app
           sudo xcode-select -s "$(ls -d /Applications/Xcode_*.app | sort -V | tail -1)"
           xcodebuild -version && swift --version
-      - name: Test (macOS, SwiftPM)
-        if: matrix.platform == 'macOS'
-        run: swift test 2>&1 | tee test.log; exit ${PIPESTATUS[0]}
-      - name: Test (iOS Simulator)
-        if: matrix.platform == 'iOS'
+      - name: Test (SwiftPM, macOS)
+        if: matrix.runner == 'swiftpm-macOS'
         run: |
           set -o pipefail
-          DEST=$(xcrun simctl list devices available -j | python3 -c "import json,sys; d=json.load(sys.stdin)['devices']; print(next(x['udid'] for k,v in d.items() if 'iOS' in k for x in v if x['name'].startswith('iPhone')))")
-          xcodebuild test -scheme ViewInspector -destination "id=$DEST" 2>&1 | tee test.log | grep -E "error:|failed|Executed|TEST (SUCCEEDED|FAILED)"
-      - name: Summarise failures
+          swift test 2>&1 | tee test.log | grep -E "error:|Executed [0-9]+ tests" | tail -5
+      - name: Test (Xcode, macOS)
+        if: matrix.runner == 'xcode-macOS'
+        run: |
+          set -o pipefail
+          xcodebuild test -project ViewInspector.xcodeproj -scheme ViewInspector-Package \
+            -destination "platform=macOS" 2>&1 | tee test.log | grep -E " error:|Executed [0-9]+ tests|TEST (SUCCEEDED|FAILED)" | tail -5
+      - name: Test (Xcode, iOS Simulator)
+        if: matrix.runner == 'xcode-iOS'
+        run: |
+          set -o pipefail
+          DEST=$(xcrun simctl list devices available -j | python3 -c "import json,sys; d=json.load(sys.stdin)['devices']; print(next(x['udid'] for k,v in sorted(d.items(), reverse=True) if 'iOS' in k for x in v if x['name'].startswith('iPhone')))")
+          xcodebuild test -project ViewInspector.xcodeproj -scheme ViewInspector-Package \
+            -destination "id=$DEST" 2>&1 | tee test.log | grep -E " error:|Executed [0-9]+ tests|TEST (SUCCEEDED|FAILED)" | tail -5
+      - name: Failing tests
         if: always()
-        run: grep -E "error:|failed \(|Executed" test.log | tail -60 || true
+        run: |
+          grep -E "Executed [0-9]+ tests" test.log | tail -1 || true
+          echo "--- failing test cases"
+          grep -oE "Test [Cc]ase '-?\[?[A-Za-z0-9_.]+[ .][A-Za-z0-9_]+\]?(\(\))?' failed" test.log | sort -u || true
+          echo "--- first error per test"
+          grep -E "error: -\[" test.log | grep -v "Failed to load test Bundle" | awk -F': error: ' '{print $2}' | sort -u | head -80 || true
 
   lint:
     name: SwiftLint (${{ matrix.ref }})
@@ -47,5 +60,5 @@ jobs:
         with:
           ref: ${{ matrix.ref == 'head' && github.sha || '2dacb6e514be19379c605a5a11564d0f3fea89d9' }}
       - run: which swiftlint || brew install swiftlint
-      - run: swiftlint lint --strict --reporter github-actions-logging Sources/ViewInspector/EnvironmentInjection.swift Sources/ViewInspector/ContentExtraction.swift Sources/ViewInspector/ViewHosting.swift Tests/ViewInspectorTests/SwiftUI/EnvironmentInjectionTests.swift || true
-      - run: swiftlint lint 2>&1 | tail -5
+      - run: swiftlint lint --strict Sources/ViewInspector/EnvironmentInjection.swift Sources/ViewInspector/ContentExtraction.swift Sources/ViewInspector/ViewHosting.swift Tests/ViewInspectorTests/SwiftUI/EnvironmentInjectionTests.swift Tests/ViewInspectorTests/SwiftUI/TextTests.swift || true
+      - run: swiftlint lint 2>&1 | tail -3

@@ -328,6 +328,10 @@ extension Bundle {
     }
     
     private static let testResources: Bundle = {
+        #if SWIFT_PACKAGE
+        // SwiftPM places the resource bundle next to the test bundle, not inside it
+        return Bundle.module
+        #else
         let bundleName = "ViewInspector_ViewInspectorTests"
         let bundle = Bundle(for: TextTests.self)
         if let resourcePath = bundle.resourceURL?
@@ -336,5 +340,6 @@ extension Bundle {
             return resources
         }
         return bundle
+        #endif
     }()
 }
