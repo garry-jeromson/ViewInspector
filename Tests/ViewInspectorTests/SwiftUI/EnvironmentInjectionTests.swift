@@ -20,7 +20,7 @@ class EnvironmentInjectionTests: XCTestCase {
 
     func testBoolEnvironmentResolvesToValueState() throws {
         let env = Environment(\.isEnabled)
-        let resolution = env._resolve(using: EnvironmentValues())
+        let resolution = env.resolveContent(using: EnvironmentValues())
         XCTAssertNotNil(resolution)
         XCTAssertEqual(resolution!.fieldSize, MemoryLayout<Environment<Bool>>.size)
         XCTAssertNotEqual(resolution!.originalBytes, resolution!.resolvedBytes)
@@ -28,7 +28,7 @@ class EnvironmentInjectionTests: XCTestCase {
 
     func testEnumEnvironmentResolvesToValueState() throws {
         let env = Environment(\.colorScheme)
-        let resolution = env._resolve(using: EnvironmentValues())
+        let resolution = env.resolveContent(using: EnvironmentValues())
         XCTAssertNotNil(resolution)
         XCTAssertEqual(resolution!.fieldSize, MemoryLayout<Environment<ColorScheme>>.size)
     }
@@ -36,7 +36,7 @@ class EnvironmentInjectionTests: XCTestCase {
     func testActionEnvironmentDoesNotCrashDuringResolution() throws {
         guard #available(iOS 15.0, macOS 12.0, tvOS 15.0, *) else { throw XCTSkip("iOS 15+") }
         let env = Environment(\.dismiss)
-        _ = env._resolve(using: EnvironmentValues())
+        _ = env.resolveContent(using: EnvironmentValues())
     }
 
     func testUnresolvedEnvironmentIsInKeyPathState() throws {

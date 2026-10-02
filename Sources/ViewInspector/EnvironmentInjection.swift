@@ -246,7 +246,7 @@ internal extension EnvironmentInjection {
         for injection in injections {
             guard let applicable = injection.keyPath as? AnyWritableEnvironmentKeyPath
             else { continue }
-            _ = applicable._apply(value: injection.value, to: &env)
+            _ = applicable.applyEnvironmentValue(injection.value, to: &env)
         }
         return env
     }
@@ -275,7 +275,7 @@ internal extension EnvironmentInjection {
             // The protocol returns both the original bytes (from the real generic type,
             // NOT the existential container) and the resolved .value state bytes.
             guard let resolvable = child.value as? any EnvironmentResolvable,
-                  let resolution = resolvable._resolve(using: environmentValues)
+                  let resolution = resolvable.resolveContent(using: environmentValues)
             else { continue }
 
             copy = writeFieldBytes(
@@ -331,9 +331,9 @@ internal extension EnvironmentInjection {
                 // Overwrite the matched field with the resolved .value state bytes.
                 var result = entity
                 withUnsafeMutableBytes(of: &result) { bytes in
-                    for i in 0..<min(fieldSize, newBytes.count) {
-                        (bytes.baseAddress! + offset + i)
-                            .assumingMemoryBound(to: UInt8.self).pointee = newBytes[i]
+                    for index in 0..<min(fieldSize, newBytes.count) {
+                        (bytes.baseAddress! + offset + index)
+                            .assumingMemoryBound(to: UInt8.self).pointee = newBytes[index]
                     }
                 }
                 return result
@@ -368,18 +368,12 @@ internal struct EnvironmentResolution {
 internal protocol EnvironmentResolvable {
     /// Resolves this @Environment using the given `EnvironmentValues` and returns the resolution
     /// data including the real struct size and bytes (not existential container bytes).
-    func _resolve(using environmentValues: EnvironmentValues) -> EnvironmentResolution?
-    /// Returns the raw bytes of this @Environment struct (real generic type, not existential).
-    func _originalBytes() -> [UInt8]
+    func resolveContent(using environmentValues: EnvironmentValues) -> EnvironmentResolution?
 }
 
 @available(iOS 13.0, macOS 10.15, tvOS 13.0, *)
 extension Environment: EnvironmentResolvable {
-    func _originalBytes() -> [UInt8] {
-        withUnsafeBytes(of: self) { Array($0) }
-    }
-
-    func _resolve(using environmentValues: EnvironmentValues) -> EnvironmentResolution? {
+    func resolveContent(using environmentValues: EnvironmentValues) -> EnvironmentResolution? {
         // Check if already in .value state
         let mirror = Mirror(reflecting: self)
         guard let contentChild = mirror.children.first(where: { $0.label == "content" }) else {
@@ -512,12 +506,12 @@ internal extension EnvironmentInjection {
 /// without a fixed list of supported types.
 @available(iOS 13.0, macOS 10.15, tvOS 13.0, *)
 internal protocol AnyWritableEnvironmentKeyPath {
-    func _apply(value: Any, to env: inout EnvironmentValues) -> Bool
+    func applyEnvironmentValue(_ value: Any, to env: inout EnvironmentValues) -> Bool
 }
 
 @available(iOS 13.0, macOS 10.15, tvOS 13.0, *)
 extension WritableKeyPath: AnyWritableEnvironmentKeyPath where Root == EnvironmentValues {
-    internal func _apply(value: Any, to env: inout EnvironmentValues) -> Bool {
+    internal func applyEnvironmentValue(_ value: Any, to env: inout EnvironmentValues) -> Bool {
         guard let typedValue = value as? Value else { return false }
         env[keyPath: self] = typedValue
         return true
