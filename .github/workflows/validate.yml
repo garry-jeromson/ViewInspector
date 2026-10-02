@@ -1,0 +1,48 @@
+name: Validate
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: ${{ matrix.platform }} (${{ matrix.ref }})
+    runs-on: macos-15
+    strategy:
+      fail-fast: false
+      matrix:
+        ref: [head, base-0.10.5]
+        platform: [macOS, iOS]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ matrix.ref == 'head' && github.sha || '0.10.5' }}
+      - name: Toolchain
+        run: xcodebuild -version && swift --version
+      - name: Test (macOS, SwiftPM)
+        if: matrix.platform == 'macOS'
+        run: swift test 2>&1 | tee test.log; exit ${PIPESTATUS[0]}
+      - name: Test (iOS Simulator)
+        if: matrix.platform == 'iOS'
+        run: |
+          set -o pipefail
+          DEST=$(xcrun simctl list devices available -j | python3 -c "import json,sys; d=json.load(sys.stdin)['devices']; print(next(x['udid'] for k,v in d.items() if 'iOS' in k for x in v if x['name'].startswith('iPhone')))")
+          xcodebuild test -scheme ViewInspector -destination "id=$DEST" 2>&1 | tee test.log | grep -E "error:|failed|Executed|TEST (SUCCEEDED|FAILED)"
+      - name: Summarise failures
+        if: always()
+        run: grep -E "error:|failed \(|Executed" test.log | tail -60 || true
+
+  lint:
+    name: SwiftLint (${{ matrix.ref }})
+    runs-on: macos-15
+    strategy:
+      fail-fast: false
+      matrix:
+        ref: [head, base-0.10.5]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ matrix.ref == 'head' && github.sha || '0.10.5' }}
+      - run: which swiftlint || brew install swiftlint
+      - run: swiftlint lint --strict --reporter github-actions-logging Sources/ViewInspector/EnvironmentInjection.swift Sources/ViewInspector/ContentExtraction.swift Sources/ViewInspector/ViewHosting.swift Tests/ViewInspectorTests/SwiftUI/EnvironmentInjectionTests.swift || true
+      - run: swiftlint lint 2>&1 | tail -5
