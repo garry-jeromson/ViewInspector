@@ -40,7 +40,7 @@ final class CustomStyleModifiersTests: XCTestCase {
         }
         ViewHosting.host(view: body)
         defer { ViewHosting.expel() }
-        wait(for: [expectation], timeout: .scaled(1.0))
+        wait(for: [expectation], timeout: 1.0)
     }
 }
 

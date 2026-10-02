@@ -78,7 +78,7 @@ final class TabViewTests: XCTestCase {
         }
         ViewHosting.host(view: sut)
         defer { ViewHosting.expel() }
-        wait(for: [exp, exp2], timeout: .scaled(2))
+        wait(for: [exp, exp2], timeout: 2)
     }
 }
 

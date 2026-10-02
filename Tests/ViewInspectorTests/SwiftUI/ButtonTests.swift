@@ -50,7 +50,7 @@ final class ButtonTests: XCTestCase {
             exp.fulfill()
         }, label: { Text("Test") })
         try button.inspect().button().tap()
-        wait(for: [exp], timeout: .scaled(0.5))
+        wait(for: [exp], timeout: 0.5)
     }
 
     func testTap() throws {
@@ -59,7 +59,7 @@ final class ButtonTests: XCTestCase {
             exp.fulfill()
         }, label: { Text("Test") }).disabled(false)
         try button.inspect().button().tap()
-        wait(for: [exp], timeout: .scaled(0.5))
+        wait(for: [exp], timeout: 0.5)
     }
 
     func testTapWhenDisabled() throws {
@@ -160,7 +160,7 @@ final class ButtonStyleInspectionTests: XCTestCase {
         }
         ViewHosting.host(view: view)
         defer { ViewHosting.expel() }
-        wait(for: [exp, triggerExp], timeout: .scaled(0.3))
+        wait(for: [exp, triggerExp], timeout: 0.3)
     }
     #endif
 }

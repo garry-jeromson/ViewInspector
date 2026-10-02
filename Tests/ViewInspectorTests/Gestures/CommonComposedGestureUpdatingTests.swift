@@ -61,7 +61,7 @@ final class CommonComposedGestureUpdatingTests<U: Gesture> {
             let gesture2 = try gesture1.second(RotationGesture.self)
             try gesture2.callUpdating(value: rotationValue, state: &state, transaction: &transaction)
         }
-        testCase.wait(for: [exp], timeout: .scaled(0.1))
+        testCase.wait(for: [exp], timeout: 0.1)
     }
 
     typealias ComposedGestureUpdatingNotFirst<T> =
@@ -95,7 +95,7 @@ final class CommonComposedGestureUpdatingTests<U: Gesture> {
             let gesture2 = try gesture1.second(RotationGesture.self)
             try gesture2.callUpdating(value: rotationValue, state: &state, transaction: &transaction)
         }
-        testCase.wait(for: [exp], timeout: .scaled(0.1))
+        testCase.wait(for: [exp], timeout: 0.1)
     }
 
     typealias ComposedGestureUpdatingMultiple<T> =
@@ -136,7 +136,7 @@ final class CommonComposedGestureUpdatingTests<U: Gesture> {
             let gesture2 = try gesture1.second(RotationGesture.self)
             try gesture2.callUpdating(value: rotationValue, state: &state, transaction: &transaction)
         }
-        testCase.wait(for: [exp1, exp2], timeout: .scaled(0.1))
+        testCase.wait(for: [exp1, exp2], timeout: 0.1)
     }
 
     func callUpdatingFailureTest<T: Gesture>(

@@ -52,7 +52,7 @@ final class TextFieldTests: XCTestCase {
             exp.fulfill()
         }, onCommit: { })
         try view.inspect().textField().callOnEditingChanged()
-        wait(for: [exp], timeout: .scaled(0.1))
+        wait(for: [exp], timeout: 0.1)
     }
     
     func testCallOnEditingChangedWhenDisabled() throws {
@@ -74,7 +74,7 @@ final class TextFieldTests: XCTestCase {
             exp.fulfill()
         })
         try view.inspect().textField().callOnCommit()
-        wait(for: [exp], timeout: .scaled(0.1))
+        wait(for: [exp], timeout: 0.1)
     }
     
     func testCallOnCommitWhenDisabled() throws {

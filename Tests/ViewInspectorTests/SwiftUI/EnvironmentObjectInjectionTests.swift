@@ -64,7 +64,7 @@ class EnvironmentObjectInjectionTests: XCTestCase {
         }
         ViewHosting.host(view: sut.environmentObject(obj1).environmentObject(obj2))
         defer { ViewHosting.expel() }
-        wait(for: [exp], timeout: .scaled(0.5))
+        wait(for: [exp], timeout: 0.5)
     }
     
     @MainActor
@@ -84,7 +84,7 @@ class EnvironmentObjectInjectionTests: XCTestCase {
         }
         ViewHosting.host(view: sut.environmentObject(obj1).environmentObject(obj2))
         defer { ViewHosting.expel() }
-        wait(for: [exp1, exp2], timeout: .scaled(0.5))
+        wait(for: [exp1, exp2], timeout: 0.5)
     }
     
     @MainActor

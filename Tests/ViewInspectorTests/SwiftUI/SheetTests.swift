@@ -77,7 +77,7 @@ final class SheetTests: XCTestCase {
         try sut.inspect().emptyView().sheet().dismiss()
         XCTAssertFalse(binding.wrappedValue)
         XCTAssertThrows(try sut.inspect().emptyView().sheet(), "View for Sheet is absent")
-        wait(for: [exp], timeout: .scaled(0.1))
+        wait(for: [exp], timeout: 0.1)
     }
 
     func testNativeSheetWithItemDismiss() throws {
@@ -89,7 +89,7 @@ final class SheetTests: XCTestCase {
         try sut.inspect().emptyView().sheet().dismiss()
         XCTAssertNil(binding.wrappedValue)
         XCTAssertThrows(try sut.inspect().emptyView().sheet(), "View for Sheet is absent")
-        wait(for: [exp], timeout: .scaled(0.1))
+        wait(for: [exp], timeout: 0.1)
     }
 
     func testNativeSheetSearch() throws {
@@ -160,7 +160,7 @@ final class SheetTests: XCTestCase {
         XCTAssertFalse(binding.wrappedValue)
         XCTAssertThrows(try sut.inspect().implicitAnyView().emptyView().sheet(), "View for Sheet is absent")
         #endif
-        wait(for: [exp], timeout: .scaled(0.1))
+        wait(for: [exp], timeout: 0.1)
     }
 
     func testDismissForItemVersion() throws {

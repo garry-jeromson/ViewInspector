@@ -131,7 +131,7 @@ final class ModifiedContentTests: XCTestCase {
         let view = EmptyView().modifier(sut)
         ViewHosting.host(view: view)
         defer { ViewHosting.expel() }
-        wait(for: [exp], timeout: .scaled(0.1))
+        wait(for: [exp], timeout: 0.1)
     }
     
     func testOnAsyncInspection() throws {
@@ -145,7 +145,7 @@ final class ModifiedContentTests: XCTestCase {
         let view = EmptyView().modifier(sut)
         ViewHosting.host(view: view)
         defer { ViewHosting.expel() }
-        wait(for: [exp], timeout: .scaled(0.1))
+        wait(for: [exp], timeout: 0.1)
     }
     
     func testModifierWithEnvObjects() throws {

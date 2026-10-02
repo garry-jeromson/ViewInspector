@@ -135,7 +135,7 @@ final class NavigationBarItemsTests: XCTestCase {
         }
         ViewHosting.host(view: sut)
         defer { ViewHosting.expel() }
-        wait(for: [exp], timeout: .scaled(1.0))
+        wait(for: [exp], timeout: 1.0)
     }
 
     func testCustomViewUnwrapStepTwo() throws {
@@ -147,7 +147,7 @@ final class NavigationBarItemsTests: XCTestCase {
         }
         ViewHosting.host(view: sut)
         defer { ViewHosting.expel() }
-        wait(for: [exp], timeout: .scaled(1.0))
+        wait(for: [exp], timeout: 1.0)
     }
 
     func testCustomViewUnwrapStepThree() throws {
@@ -160,7 +160,7 @@ final class NavigationBarItemsTests: XCTestCase {
         }
         ViewHosting.host(view: sut)
         defer { ViewHosting.expel() }
-        wait(for: [exp], timeout: .scaled(1.0))
+        wait(for: [exp], timeout: 1.0)
     }
 }
 

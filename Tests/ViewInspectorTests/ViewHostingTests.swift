@@ -24,7 +24,7 @@ final class ViewHostingTests: XCTestCase {
         }
         ViewHosting.host(view: sut)
         defer { ViewHosting.expel() }
-        wait(for: [exp], timeout: .scaled(0.1))
+        wait(for: [exp], timeout: 0.1)
     }
 
     func testNSViewExtraction() throws {
@@ -41,7 +41,7 @@ final class ViewHostingTests: XCTestCase {
         }
         ViewHosting.host(view: sut)
         defer { ViewHosting.expel() }
-        wait(for: [exp], timeout: .scaled(0.2))
+        wait(for: [exp], timeout: 0.2)
     }
 
     func testNSViewExtractionAfterStateUpdate() throws {
@@ -65,7 +65,7 @@ final class ViewHostingTests: XCTestCase {
         }
         ViewHosting.host(view: sut)
         defer { ViewHosting.expel() }
-        wait(for: [exp], timeout: .scaled(0.2))
+        wait(for: [exp], timeout: 0.2)
     }
     
     func testNSViewControllerExtraction() throws {
@@ -80,7 +80,7 @@ final class ViewHostingTests: XCTestCase {
         }
         ViewHosting.host(view: sut)
         defer { ViewHosting.expel() }
-        wait(for: [exp], timeout: .scaled(0.2))
+        wait(for: [exp], timeout: 0.2)
     }
 }
 #elseif os(iOS) || os(tvOS)
@@ -100,7 +100,7 @@ final class ViewHostingTests: XCTestCase {
         }
         ViewHosting.host(view: sut)
         defer { ViewHosting.expel() }
-        wait(for: [exp], timeout: .scaled(0.1))
+        wait(for: [exp], timeout: 0.1)
     }
 
     func testUIViewExtraction() throws {
@@ -117,7 +117,7 @@ final class ViewHostingTests: XCTestCase {
         }
         ViewHosting.host(view: sut)
         defer { ViewHosting.expel() }
-        wait(for: [exp], timeout: .scaled(0.2))
+        wait(for: [exp], timeout: 0.2)
     }
     
     func testUIViewExtractionAfterStateUpdate() throws {
@@ -141,7 +141,7 @@ final class ViewHostingTests: XCTestCase {
         }
         ViewHosting.host(view: sut)
         defer { ViewHosting.expel() }
-        wait(for: [exp], timeout: .scaled(0.2))
+        wait(for: [exp], timeout: 0.2)
     }
     
     func testUIViewControllerExtraction() throws {
@@ -156,7 +156,7 @@ final class ViewHostingTests: XCTestCase {
         }
         ViewHosting.host(view: sut)
         defer { ViewHosting.expel() }
-        wait(for: [exp], timeout: .scaled(0.2))
+        wait(for: [exp], timeout: 0.2)
     }
 }
 #elseif os(watchOS)
@@ -177,7 +177,7 @@ final class ViewHostingTests: XCTestCase {
         }
         ViewHosting.host(view: sut)
         defer { ViewHosting.expel() }
-        wait(for: [exp], timeout: .scaled(0.1))
+        wait(for: [exp], timeout: 0.1)
     }
     
     func testWKViewExtraction() throws {
@@ -192,7 +192,7 @@ final class ViewHostingTests: XCTestCase {
         }
         ViewHosting.host(view: sut)
         defer { ViewHosting.expel() }
-        wait(for: [exp], timeout: .scaled(1))
+        wait(for: [exp], timeout: 1)
     }
 }
 #endif

@@ -17,7 +17,7 @@ final class InspectionEmissaryTests: XCTestCase {
         }
         ViewHosting.host(view: sut)
         defer { ViewHosting.expel() }
-        wait(for: [exp], timeout: .scaled(0.1))
+        wait(for: [exp], timeout: 0.1)
     }
     
     @MainActor
@@ -34,7 +34,7 @@ final class InspectionEmissaryTests: XCTestCase {
             .environmentObject(ExternalState())
         ViewHosting.host(view: view)
         defer { ViewHosting.expel() }
-        wait(for: [exp], timeout: .scaled(0.1))
+        wait(for: [exp], timeout: 0.1)
     }
 
     @MainActor
@@ -51,7 +51,7 @@ final class InspectionEmissaryTests: XCTestCase {
         }
         ViewHosting.host(view: sut)
         defer { ViewHosting.expel() }
-        wait(for: [exp1, exp2], timeout: .scaled(0.2))
+        wait(for: [exp1, exp2], timeout: 0.2)
     }
     
     @MainActor
@@ -74,7 +74,7 @@ final class InspectionEmissaryTests: XCTestCase {
             .environmentObject(ExternalState())
         ViewHosting.host(view: view)
         defer { ViewHosting.expel() }
-        wait(for: [exp1, exp2], timeout: .scaled(0.2))
+        wait(for: [exp1, exp2], timeout: 0.2)
     }
     
     @MainActor
@@ -96,7 +96,7 @@ final class InspectionEmissaryTests: XCTestCase {
         }
         ViewHosting.host(view: sut)
         defer { ViewHosting.expel() }
-        wait(for: [exp1, exp2, exp3], timeout: .scaled(0.2))
+        wait(for: [exp1, exp2, exp3], timeout: 0.2)
     }
     
     @MainActor
@@ -118,7 +118,7 @@ final class InspectionEmissaryTests: XCTestCase {
         }
         ViewHosting.host(view: sut)
         defer { ViewHosting.expel() }
-        wait(for: [exp1, exp2, exp3], timeout: .scaled(0.2))
+        wait(for: [exp1, exp2, exp3], timeout: 0.2)
     }
     
     @MainActor
@@ -144,7 +144,7 @@ final class InspectionEmissaryTests: XCTestCase {
             .environmentObject(ExternalState())
         ViewHosting.host(view: view)
         defer { ViewHosting.expel() }
-        wait(for: [exp1, exp2, exp3], timeout: .scaled(0.2))
+        wait(for: [exp1, exp2, exp3], timeout: 0.2)
     }
     
     @MainActor
@@ -170,7 +170,7 @@ final class InspectionEmissaryTests: XCTestCase {
             .environmentObject(ExternalState())
         ViewHosting.host(view: view)
         defer { ViewHosting.expel() }
-        wait(for: [exp1, exp2, exp3], timeout: .scaled(0.2))
+        wait(for: [exp1, exp2, exp3], timeout: 0.2)
     }
 
     @MainActor

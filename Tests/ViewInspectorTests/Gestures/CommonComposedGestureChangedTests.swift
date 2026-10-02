@@ -59,7 +59,7 @@ final class CommonComposedGestureChangedTests<U: Gesture> {
             let gesture2 = try gesture1.second(RotationGesture.self)
             try gesture2.callOnChanged(value: rotationValue)
         }
-        testCase.wait(for: [exp], timeout: .scaled(0.1))
+        testCase.wait(for: [exp], timeout: 0.1)
     }
 
     typealias ComposedGestureChangedNotFirst<T> =
@@ -93,7 +93,7 @@ final class CommonComposedGestureChangedTests<U: Gesture> {
             let gesture2 = try gesture1.second(RotationGesture.self)
             try gesture2.callOnChanged(value: rotationValue)
         }
-        testCase.wait(for: [exp], timeout: .scaled(0.1))
+        testCase.wait(for: [exp], timeout: 0.1)
     }
 
     typealias ComposedGestureChangedMultiple<T> =
@@ -134,7 +134,7 @@ final class CommonComposedGestureChangedTests<U: Gesture> {
             let gesture2 = try gesture1.second(RotationGesture.self)
             try gesture2.callOnChanged(value: rotationValue)
         }
-        testCase.wait(for: [exp1, exp2], timeout: .scaled(0.1))
+        testCase.wait(for: [exp1, exp2], timeout: 0.1)
     }
 
     func callChangedFailureTest<T: Gesture>(
