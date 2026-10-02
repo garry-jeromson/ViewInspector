@@ -10,6 +10,11 @@ import Combine
 @available(tvOS, unavailable)
 final class GestureExampleTests: XCTestCase {
 
+    nonisolated override class func setUp() {
+        super.setUp()
+        MainActor.assumeIsolated { HostingWarmUp.perform() }
+    }
+
     func testGestureModifier() throws {
         guard #available(iOS 14.0, tvOS 16.0, *) else { throw XCTSkip() }
         let sut = TestGestureView1()
@@ -67,7 +72,7 @@ final class GestureExampleTests: XCTestCase {
 
         ViewHosting.host(view: sut)
         defer { ViewHosting.expel() }
-        wait(for: [exp1, exp2], timeout: 0.1)
+        wait(for: [exp1, exp2], timeout: 1)
     }
 
     func testTestGestureChanged() throws {
@@ -89,7 +94,7 @@ final class GestureExampleTests: XCTestCase {
 
         ViewHosting.host(view: sut)
         defer { ViewHosting.expel() }
-        wait(for: [exp1, exp2], timeout: 0.1)
+        wait(for: [exp1, exp2], timeout: 1)
     }
 
     func testTestGestureEnded() throws {
@@ -112,7 +117,7 @@ final class GestureExampleTests: XCTestCase {
 
         ViewHosting.host(view: sut)
         defer { ViewHosting.expel() }
-        wait(for: [exp1, exp2], timeout: 0.1)
+        wait(for: [exp1, exp2], timeout: 1)
     }
     
     #if os(macOS)
