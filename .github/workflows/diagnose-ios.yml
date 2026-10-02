@@ -27,6 +27,6 @@ jobs:
             echo "===== $t"
             xcodebuild test-without-building -project ViewInspector.xcodeproj -scheme ViewInspector-Package \
               -destination "id=$DEST" -only-testing:ViewInspectorTests/$t \
-              -test-iterations 5 -run-tests-until-failure NO 2>&1 \
-              | grep -E "error:|' (passed|failed)|Executed [0-9]+ tests" | grep -v "passed" | sort | uniq -c | head -40 || true
+              -test-iterations 5 2>&1 \
+              | grep -E "error:|' failed|Executed [0-9]+ tests" | sed -E 's/^.*Tests\/ViewInspectorTests\///; s/ in [0-9.]+ \([0-9.]+\) seconds//' | sort | uniq -c | head -40 || true
           done
