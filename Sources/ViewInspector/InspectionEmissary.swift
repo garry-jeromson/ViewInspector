@@ -187,14 +187,19 @@ private extension InspectionEmissary {
     func setup(inspection: @escaping SubjectInspection,
                expectation: XCTestExpectation,
                function: String, file: StaticString, line: UInt) {
+        let emissary = ObjectIdentifier(self)
         callbacks[line] = { view in
+            // Counted synchronously, because several notices can be delivered
+            // before the first scheduled inspection gets to run.
+            MainActor.assumeIsolated { PendingInspections.begin(emissary) }
             Task { @MainActor in
                 do {
                     try await inspection(view)
                 } catch {
                     XCTFail("\(error.localizedDescription)", file: file, line: line)
                 }
-                if self.callbacks.isEmpty {
+                let isLastPending = PendingInspections.end(emissary)
+                if self.callbacks.isEmpty && isLastPending {
                     ViewHosting.expel(function: function)
                 }
                 expectation.fulfill()
@@ -222,6 +227,24 @@ private extension InspectionEmissary {
                 notice.send(line)
             }
         }
+    }
+}
+
+/// Inspections that were triggered but haven't finished yet, per emissary.
+/// The hosted view must stay in place until the last of them completes.
+@MainActor
+private enum PendingInspections {
+    private static var counts: [ObjectIdentifier: Int] = [:]
+
+    static func begin(_ emissary: ObjectIdentifier) {
+        counts[emissary, default: 0] += 1
+    }
+
+    /// Returns `true` if no other inspection is pending for the emissary.
+    static func end(_ emissary: ObjectIdentifier) -> Bool {
+        let remaining = max(0, counts[emissary, default: 1] - 1)
+        counts[emissary] = remaining > 0 ? remaining : nil
+        return remaining == 0
     }
 }
 
