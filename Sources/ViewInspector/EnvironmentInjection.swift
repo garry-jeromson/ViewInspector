@@ -12,13 +12,18 @@ public enum ViewInspectorConfig {
     ///
     /// Defaults to the `VIEWINSPECTOR_RESOLVE_ENVIRONMENT` environment variable
     /// (set to "1", "YES", or "TRUE"). Can be overridden per-test via direct assignment.
-    nonisolated(unsafe) public static var resolveEnvironmentValues: Bool = {
+    #if compiler(>=5.10)
+    nonisolated(unsafe) public static var resolveEnvironmentValues: Bool = defaultResolveEnvironmentValues
+    #else
+    public static var resolveEnvironmentValues: Bool = defaultResolveEnvironmentValues
+    #endif
+
+    private static var defaultResolveEnvironmentValues: Bool {
         if let value = ProcessInfo.processInfo.environment["VIEWINSPECTOR_RESOLVE_ENVIRONMENT"] {
             return value == "1" || value.uppercased() == "YES" || value.uppercased() == "TRUE"
         }
         return false
-    }()
-
+    }
 }
 
 // MARK: - EnvironmentObject injection
