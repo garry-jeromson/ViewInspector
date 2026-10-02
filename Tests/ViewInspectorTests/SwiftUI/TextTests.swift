@@ -330,10 +330,12 @@ extension Bundle {
     private static let testResources: Bundle = {
         let bundleName = "ViewInspector_ViewInspectorTests"
         let bundle = Bundle(for: TextTests.self)
-        if let resourcePath = bundle.resourceURL?
-            .appendingPathComponent(bundleName + ".bundle"),
-           let resources = Bundle(url: resourcePath) {
-            return resources
+        // Xcode embeds the resource bundle in the test bundle; SwiftPM places it next to it
+        let locations = [bundle.resourceURL, bundle.bundleURL.deletingLastPathComponent()]
+        for location in locations.compactMap({ $0 }) {
+            if let resources = Bundle(url: location.appendingPathComponent(bundleName + ".bundle")) {
+                return resources
+            }
         }
         return bundle
     }()
