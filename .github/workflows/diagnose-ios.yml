@@ -1,0 +1,32 @@
+name: Diagnose iOS
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  diagnose:
+    name: iOS isolated (${{ matrix.ref }})
+    runs-on: macos-26
+    strategy:
+      fail-fast: false
+      matrix:
+        ref: [head, base-0.10.6]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ matrix.ref == 'head' && github.sha || '2dacb6e514be19379c605a5a11564d0f3fea89d9' }}
+      - name: Toolchain
+        run: sudo xcode-select -s "$(ls -d /Applications/Xcode_*.app | sort -V | tail -1)"
+      - name: Run failing tests in isolation, 5 iterations
+        run: |
+          DEST=$(xcrun simctl list devices available -j | python3 -c "import json,sys; d=json.load(sys.stdin)['devices']; print(next(x['udid'] for k,v in sorted(d.items(), reverse=True) if 'iOS' in k for x in v if x['name'].startswith('iPhone')))")
+          xcrun simctl boot "$DEST" || true
+          xcodebuild build-for-testing -project ViewInspector.xcodeproj -scheme ViewInspector-Package -destination "id=$DEST" -quiet
+          for t in EnvironmentObjectInjectionTests ComposedGestureExampleTests GestureExampleTests; do
+            echo "===== $t"
+            xcodebuild test-without-building -project ViewInspector.xcodeproj -scheme ViewInspector-Package \
+              -destination "id=$DEST" -only-testing:ViewInspectorTests/$t \
+              -test-iterations 5 -run-tests-until-failure NO 2>&1 \
+              | grep -E "error:|' (passed|failed)|Executed [0-9]+ tests" | grep -v "passed" | sort | uniq -c | head -40 || true
+          done
