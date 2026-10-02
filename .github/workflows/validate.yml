@@ -16,7 +16,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ matrix.ref == 'head' && github.sha || '0.10.5' }}
+          ref: ${{ matrix.ref == 'head' && github.sha || '2dacb6e514be19379c605a5a11564d0f3fea89d9' }}
       - name: Toolchain
         run: |
           ls -d /Applications/Xcode*.app
@@ -45,7 +45,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ matrix.ref == 'head' && github.sha || '0.10.5' }}
+          ref: ${{ matrix.ref == 'head' && github.sha || '2dacb6e514be19379c605a5a11564d0f3fea89d9' }}
       - run: which swiftlint || brew install swiftlint
       - run: swiftlint lint --strict --reporter github-actions-logging Sources/ViewInspector/EnvironmentInjection.swift Sources/ViewInspector/ContentExtraction.swift Sources/ViewInspector/ViewHosting.swift Tests/ViewInspectorTests/SwiftUI/EnvironmentInjectionTests.swift || true
       - run: swiftlint lint 2>&1 | tail -5
