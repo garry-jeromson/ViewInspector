@@ -22,7 +22,7 @@ final class InteractionTests: XCTestCase {
             return []
         }.onCopyCommand { [] }
         try sut.inspect().emptyView().callOnCutCommand()
-        wait(for: [exp], timeout: 0.1)
+        wait(for: [exp], timeout: .scaled(0.1))
     }
     
     func testOnCopyCommand() throws {
@@ -37,7 +37,7 @@ final class InteractionTests: XCTestCase {
             return []
         }.onCutCommand { [] }
         try sut.inspect().emptyView().callOnCopyCommand()
-        wait(for: [exp], timeout: 0.1)
+        wait(for: [exp], timeout: .scaled(0.1))
     }
     
     func testOnPasteCommand() throws {
@@ -53,7 +53,7 @@ final class InteractionTests: XCTestCase {
             exp.fulfill()
         }
         try sut.inspect().emptyView().callOnPasteCommand()
-        wait(for: [exp], timeout: 0.1)
+        wait(for: [exp], timeout: .scaled(0.1))
     }
     */
     
@@ -74,7 +74,7 @@ final class InteractionTests: XCTestCase {
             exp.fulfill()
         }.onCutCommand { [] }
         try sut.inspect().emptyView().callOnDeleteCommand()
-        wait(for: [exp], timeout: 0.1)
+        wait(for: [exp], timeout: .scaled(0.1))
     }
     #endif
     
@@ -101,7 +101,7 @@ final class InteractionTests: XCTestCase {
         try directions.forEach {
             try view.callOnMoveCommand($0)
         }
-        wait(for: [exp], timeout: 0.1)
+        wait(for: [exp], timeout: .scaled(0.1))
     }
     #endif
     
@@ -119,7 +119,7 @@ final class InteractionTests: XCTestCase {
             exp.fulfill()
         }
         try sut.inspect().emptyView().callOnExitCommand()
-        wait(for: [exp], timeout: 0.1)
+        wait(for: [exp], timeout: .scaled(0.1))
     }
     #endif
     
@@ -142,7 +142,7 @@ final class InteractionTests: XCTestCase {
             exp.fulfill()
         }
         try sut.inspect().emptyView().callOnCommand(#selector(Self.setUp))
-        wait(for: [exp], timeout: 0.1)
+        wait(for: [exp], timeout: .scaled(0.1))
     }
     #endif
     
@@ -177,7 +177,7 @@ final class ViewHoverTests: XCTestCase {
             exp.fulfill()
         }
         try sut.inspect().emptyView().callOnHover()
-        wait(for: [exp], timeout: 0.1)
+        wait(for: [exp], timeout: .scaled(0.1))
     }
     */
     #endif
@@ -196,7 +196,7 @@ final class ViewHoverTests: XCTestCase {
             exp.fulfill()
         }
         try sut.inspect().emptyView().callOnFocusChange()
-        wait(for: [exp], timeout: 0.1)
+        wait(for: [exp], timeout: .scaled(0.1))
     }
     #endif
 }

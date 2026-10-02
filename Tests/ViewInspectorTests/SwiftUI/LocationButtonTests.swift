@@ -46,7 +46,7 @@ final class LocationButtonTests: XCTestCase {
         let exp = XCTestExpectation(description: #function)
         let sut = LocationButton { exp.fulfill() }
         try sut.inspect().locationButton().tap()
-        wait(for: [exp], timeout: 0.1)
+        wait(for: [exp], timeout: .scaled(0.1))
     }
 }
 #endif
