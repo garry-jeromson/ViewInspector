@@ -81,7 +81,7 @@ final class CommonGestureTests<T: Gesture> {
         var transaction = Transaction()
         try sut.inspect().emptyView().gesture(T.self)
             .callUpdating(value: value, state: &state, transaction: &transaction)
-        testCase.wait(for: [exp], timeout: 0.1)
+        testCase.wait(for: [exp], timeout: .scaled(0.1))
     }
 
     func callUpdatingNotFirstTest(file: StaticString = #filePath, line: UInt = #line) throws {
@@ -97,7 +97,7 @@ final class CommonGestureTests<T: Gesture> {
         var transaction = Transaction()
         try sut.inspect().emptyView().gesture(T.self)
             .callUpdating(value: value, state: &state, transaction: &transaction)
-        testCase.wait(for: [exp], timeout: 0.1)
+        testCase.wait(for: [exp], timeout: .scaled(0.1))
     }
 
     func callUpdatingMultipleTest(file: StaticString = #filePath, line: UInt = #line) throws {
@@ -117,7 +117,7 @@ final class CommonGestureTests<T: Gesture> {
         var transaction = Transaction()
         try sut.inspect().emptyView().gesture(T.self)
             .callUpdating(value: value, state: &state, transaction: &transaction)
-        testCase.wait(for: [exp1, exp2], timeout: 0.1)
+        testCase.wait(for: [exp1, exp2], timeout: .scaled(0.1))
     }
 
     func callUpdatingFailureTest(file: StaticString = #filePath, line: UInt = #line) throws {
@@ -147,7 +147,7 @@ final class CommonGestureTests<T: Gesture> {
             }
         let sut = EmptyView().gesture(modifiedGesture)
         try sut.inspect().emptyView().gesture(T.self).callOnChanged(value: value)
-        testCase.wait(for: [exp], timeout: 0.1)
+        testCase.wait(for: [exp], timeout: .scaled(0.1))
     }
 
     func callOnChangedNotFirstTest(file: StaticString = #filePath, line: UInt = #line) throws
@@ -161,7 +161,7 @@ final class CommonGestureTests<T: Gesture> {
             }
         let sut = EmptyView().gesture(modifiedGesture)
         try sut.inspect().emptyView().gesture(T.self).callOnChanged(value: value)
-        testCase.wait(for: [exp], timeout: 0.1)
+        testCase.wait(for: [exp], timeout: .scaled(0.1))
     }
 
     func callOnChangedMultipleTest(file: StaticString = #filePath, line: UInt = #line) throws
@@ -179,7 +179,7 @@ final class CommonGestureTests<T: Gesture> {
             }
         let sut = EmptyView().gesture(modifiedGesture)
         try sut.inspect().emptyView().gesture(T.self).callOnChanged(value: value)
-        testCase.wait(for: [exp1, exp2], timeout: 0.1)
+        testCase.wait(for: [exp1, exp2], timeout: .scaled(0.1))
     }
 
     func callOnChangedFailureTest(file: StaticString = #filePath, line: UInt = #line) throws
@@ -206,7 +206,7 @@ final class CommonGestureTests<T: Gesture> {
         let sut = EmptyView().gesture(modifiedGesture)
         
         try sut.inspect().emptyView().gesture(T.self).callOnEnded(value: value)
-        testCase.wait(for: [exp], timeout: 0.1)
+        testCase.wait(for: [exp], timeout: .scaled(0.1))
     }
 
     func callOnEndedNotFirstTest(file: StaticString = #filePath, line: UInt = #line) throws {
@@ -220,7 +220,7 @@ final class CommonGestureTests<T: Gesture> {
         let sut = EmptyView().gesture(modifiedGesture)
         
         try sut.inspect().emptyView().gesture(T.self).callOnEnded(value: value)
-        testCase.wait(for: [exp], timeout: 0.1)
+        testCase.wait(for: [exp], timeout: .scaled(0.1))
     }
 
     func callOnEndedMultipleTest(file: StaticString = #filePath, line: UInt = #line) throws {
@@ -238,7 +238,7 @@ final class CommonGestureTests<T: Gesture> {
         let sut = EmptyView().gesture(modifiedGesture)
         
         try sut.inspect().emptyView().gesture(T.self).callOnEnded(value: value)
-        testCase.wait(for: [exp1, exp2], timeout: 0.1)
+        testCase.wait(for: [exp1, exp2], timeout: .scaled(0.1))
     }
 
     func callOnEndedFailureTest(file: StaticString = #filePath, line: UInt = #line) throws {

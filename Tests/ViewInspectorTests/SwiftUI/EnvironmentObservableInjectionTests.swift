@@ -82,7 +82,7 @@ final class EnvironmentObservableInjectionTests: XCTestCase {
         }
         ViewHosting.host(view: sut.environment(obj1).environment(obj2))
         defer { ViewHosting.expel() }
-        wait(for: [exp], timeout: 0.5)
+        wait(for: [exp], timeout: .scaled(0.5))
     }
 
     func testEnvironmentInjectionDuringAsyncInspection() throws {
@@ -101,7 +101,7 @@ final class EnvironmentObservableInjectionTests: XCTestCase {
         }
         ViewHosting.host(view: sut.environment(obj1).environment(obj2))
         defer { ViewHosting.expel() }
-        wait(for: [exp], timeout: 0.5)
+        wait(for: [exp], timeout: .scaled(0.5))
     }
 
     func testEnvironmentValueOfTheSameTypeIsInjectedSeparately() throws {

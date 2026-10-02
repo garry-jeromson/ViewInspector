@@ -62,6 +62,6 @@ final class SliderTests: XCTestCase {
             exp.fulfill()
         }
         try view.inspect().slider().callOnEditingChanged()
-        wait(for: [exp], timeout: 0.5)
+        wait(for: [exp], timeout: .scaled(0.5))
     }
 }

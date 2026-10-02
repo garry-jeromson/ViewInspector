@@ -67,7 +67,7 @@ final class FullScreenCoverTests: XCTestCase {
         XCTAssertFalse(binding.wrappedValue)
         XCTAssertThrows(try sut.inspect().emptyView().fullScreenCover(),
                         "View for FullScreenCover is absent")
-        wait(for: [exp], timeout: 0.1)
+        wait(for: [exp], timeout: .scaled(0.1))
     }
 
     func testNativeFullScreenCoverWithItemDismiss() throws {
@@ -153,7 +153,7 @@ final class FullScreenCoverTests: XCTestCase {
         XCTAssertFalse(binding.wrappedValue)
         XCTAssertThrows(try sut.inspect().implicitAnyView().emptyView().fullScreenCover(), "View for FullScreenCover is absent")
         #endif
-        wait(for: [exp], timeout: 0.1)
+        wait(for: [exp], timeout: .scaled(0.1))
     }
 
     func testDismissForItemVersion() throws {
