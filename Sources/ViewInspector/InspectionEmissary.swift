@@ -162,7 +162,9 @@ private extension InspectionEmissary {
         setup(inspection: inspection, expectation: exp, function: function, file: file, line: line)
         var subscription: AnyCancellable?
         _ = subscription
+        print("VIDIAG onReceive subscribe line=\(line)")
         subscription = publisher.sink { [weak self] _ in
+            print("VIDIAG onReceive publisher fired line=\(line) self=\(self != nil)")
             subscription = nil
             self?.deliverNotice(line, after: delay)
         }
@@ -185,7 +187,11 @@ private extension InspectionEmissary {
     nonisolated func deliverNotice(_ line: UInt, after delay: TimeInterval, attempts: Int = 200) {
         DispatchQueue.main.asyncAfter(deadline: .now() + delay) { [weak self] in
             MainActor.assumeIsolated {
-                guard let self, self.callbacks[line] != nil else { return }
+                guard let self, self.callbacks[line] != nil else {
+                    print("VIDIAG deliver line=\(line) skip (consumed or released) attempts=\(attempts)")
+                    return
+                }
+                print("VIDIAG deliver line=\(line) send attempt=\(201 - attempts)")
                 self.notice.send(line)
                 if attempts > 1 {
                     self.deliverNotice(line, after: 0.05, attempts: attempts - 1)
@@ -202,13 +208,16 @@ private extension InspectionEmissary {
             // Counted synchronously, because several notices can be delivered
             // before the first scheduled inspection gets to run.
             MainActor.assumeIsolated { PendingInspections.begin(emissary) }
+            print("VIDIAG callback invoked line=\(line)")
             Task { @MainActor in
+                print("VIDIAG task start line=\(line)")
                 do {
                     try await inspection(view)
                 } catch {
                     XCTFail("\(error.localizedDescription)", file: file, line: line)
                 }
                 let isLastPending = PendingInspections.end(emissary)
+                print("VIDIAG task end line=\(line) last=\(isLastPending) callbacks=\(self.callbacks.keys.sorted())")
                 if self.callbacks.isEmpty && isLastPending {
                     ViewHosting.expel(function: function)
                 }

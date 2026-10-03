@@ -1,0 +1,37 @@
+name: Diagnose iOS
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  diagnose:
+    name: iOS gesture diagnostics
+    runs-on: macos-26
+    env:
+      TEST_RUNNER_VIEWINSPECTOR_TEST_TIMEOUT_SCALE: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Toolchain
+        run: sudo xcode-select -s "$(ls -d /Applications/Xcode_*.app | sort -V | tail -1)"
+      - name: Run GestureExampleTests 10x with logging
+        run: |
+          DEST=$(xcrun simctl list devices available -j | python3 -c "import json,sys; d=json.load(sys.stdin)['devices']; print(next(x['udid'] for k,v in sorted(d.items(), reverse=True) if 'iOS' in k for x in v if x['name'].startswith('iPhone')))")
+          xcodebuild build-for-testing -project ViewInspector.xcodeproj -scheme ViewInspector-Package -destination "id=$DEST" -quiet
+          xcodebuild test-without-building -project ViewInspector.xcodeproj -scheme ViewInspector-Package \
+            -destination "id=$DEST" -only-testing:ViewInspectorTests/GestureExampleTests \
+            -test-iterations 10 > test.log 2>&1 || true
+          grep -E "Executed [0-9]+ tests" test.log | tail -1
+          python3 - <<'PY'
+          import re
+          lines=open('test.log',errors='replace').read().split('\n')
+          # print the VIDIAG trace of every failed test case
+          start=None
+          for i,l in enumerate(lines):
+              if re.search(r"Test Case '.*' started", l): start=i
+              m=re.search(r"Test Case '(.*)' failed", l)
+              if m and start is not None:
+                  print('=====', m.group(1))
+                  for x in lines[start:i+1]:
+                      if 'VIDIAG' in x or 'error:' in x: print(x[:220])
+          PY

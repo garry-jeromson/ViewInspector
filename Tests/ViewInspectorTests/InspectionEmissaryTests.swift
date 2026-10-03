@@ -368,6 +368,7 @@ final class Inspection<V>: InspectionEmissary {
     var callbacks = [UInt: (V) -> Void]()
     
     func visit(_ view: V, _ line: UInt) {
+        print("VIDIAG visit line=\(line) pending=\(callbacks.keys.sorted())")
         if let callback = callbacks.removeValue(forKey: line) {
             callback(view)
         } else {
