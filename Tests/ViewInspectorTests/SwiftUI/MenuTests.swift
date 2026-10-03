@@ -75,7 +75,7 @@ final class MenuTests: XCTestCase {
             exp.fulfill()
         })
         try sut.inspect().menu().callPrimaryAction()
-        wait(for: [exp], timeout: 0.1)
+        wait(for: [exp], timeout: .scaled(0.1))
     }
     
     func testAbsentPrimaryActionCall() throws {

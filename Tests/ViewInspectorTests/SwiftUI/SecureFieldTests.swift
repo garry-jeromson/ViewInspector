@@ -61,6 +61,6 @@ final class SecureFieldTests: XCTestCase {
             exp.fulfill()
         })
         try view.inspect().secureField().callOnCommit()
-        wait(for: [exp], timeout: 0.5)
+        wait(for: [exp], timeout: .scaled(0.5))
     }
 }

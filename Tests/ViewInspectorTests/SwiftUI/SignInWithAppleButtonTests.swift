@@ -75,7 +75,7 @@ final class SignInWithAppleButtonTests: XCTestCase {
             onCompletion.fulfill()
         })
         try sut.inspect().signInWithAppleButton().tap(.appleIDCredential(credential))
-        wait(for: [onRequest, onCompletion], timeout: 0.1)
+        wait(for: [onRequest, onCompletion], timeout: .scaled(0.1))
     }
     #endif
 }

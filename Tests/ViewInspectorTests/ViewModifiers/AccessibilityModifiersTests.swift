@@ -203,7 +203,7 @@ final class ViewAccessibilityActionTests: XCTestCase {
         }
         try sut.inspect().emptyView().callAccessibilityAction(.default)
         try sut.inspect().emptyView().callAccessibilityAction("custom")
-        wait(for: [exp], timeout: 0.1)
+        wait(for: [exp], timeout: .scaled(0.1))
     }
     
     func testAccessibilityActionInspectionError() throws {
@@ -235,7 +235,7 @@ final class ViewAccessibilityActionTests: XCTestCase {
         try view.callAccessibilityAction(.escape)
         try view.callAccessibilityAction(.default)
         try view.callAccessibilityAction(.escape)
-        wait(for: [exp1, exp2], timeout: 0.1)
+        wait(for: [exp1, exp2], timeout: .scaled(0.1))
     }
     
     func testAccessibilityAdjustableAction() throws {
@@ -253,7 +253,7 @@ final class ViewAccessibilityActionTests: XCTestCase {
             exp.fulfill()
         }
         try sut.inspect().emptyView().callAccessibilityAdjustableAction(.decrement)
-        wait(for: [exp], timeout: 0.1)
+        wait(for: [exp], timeout: .scaled(0.1))
     }
     
     func testAccessibilityScrollAction() throws {
@@ -271,7 +271,7 @@ final class ViewAccessibilityActionTests: XCTestCase {
             exp.fulfill()
         }
         try sut.inspect().emptyView().callAccessibilityScrollAction(.leading)
-        wait(for: [exp], timeout: 0.1)
+        wait(for: [exp], timeout: .scaled(0.1))
     }
     
     func testAccessibilityElement() throws {
