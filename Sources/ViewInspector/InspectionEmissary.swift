@@ -188,11 +188,11 @@ private extension InspectionEmissary {
         if attempts == 200 {
             let inDrain = Thread.callStackSymbols.contains { $0.contains("SERVICING_THE_MAIN_DISPATCH_QUEUE") }
             print("VIDIAG t=\(String(format: "%.3f", ProcessInfo.processInfo.systemUptime)) schedule line=\(line) delay=\(delay) insideMainQueueDrain=\(inDrain)")
-            var beats = 0
+            let started = ProcessInfo.processInfo.systemUptime
             let timer = Timer(timeInterval: 0.1, repeats: true) { timer in
-                beats += 1
-                print("VIDIAG t=\(String(format: "%.3f", ProcessInfo.processInfo.systemUptime)) heartbeat line=\(line) n=\(beats)")
-                if beats >= 15 { timer.invalidate() }
+                let now = ProcessInfo.processInfo.systemUptime
+                print("VIDIAG t=\(String(format: "%.3f", now)) heartbeat line=\(line)")
+                if now - started > 1.5 { timer.invalidate() }
             }
             RunLoop.main.add(timer, forMode: .common)
         }
