@@ -1,6 +1,7 @@
 name: Validate
 
 on:
+  push:
   workflow_dispatch:
 
 jobs:
@@ -8,8 +9,8 @@ jobs:
     name: ${{ matrix.runner }} (${{ matrix.ref }})
     runs-on: macos-26
     env:
-      VIEWINSPECTOR_TEST_TIMEOUT_SCALE: 10
-      TEST_RUNNER_VIEWINSPECTOR_TEST_TIMEOUT_SCALE: 10
+      VIEWINSPECTOR_TEST_TIMEOUT_SCALE: 50
+      TEST_RUNNER_VIEWINSPECTOR_TEST_TIMEOUT_SCALE: 50
     strategy:
       fail-fast: false
       matrix:

@@ -162,9 +162,7 @@ private extension InspectionEmissary {
         setup(inspection: inspection, expectation: exp, function: function, file: file, line: line)
         var subscription: AnyCancellable?
         _ = subscription
-        print("VIDIAG t=\(String(format: "%.3f", ProcessInfo.processInfo.systemUptime)) onReceive subscribe line=\(line)")
         subscription = publisher.sink { [weak self] _ in
-            print("VIDIAG t=\(String(format: "%.3f", ProcessInfo.processInfo.systemUptime)) onReceive publisher fired line=\(line) self=\(self != nil)")
             subscription = nil
             self?.deliverNotice(line, after: delay)
         }
@@ -185,17 +183,9 @@ private extension InspectionEmissary {
     /// Sends the notice for the inspection at `line`. A view that hasn't rendered yet isn't
     /// subscribed to `notice` and would miss it, so it's re-sent until the callback is consumed.
     nonisolated func deliverNotice(_ line: UInt, after delay: TimeInterval, attempts: Int = 200) {
-        if attempts == 200 {
-            let inDrain = Thread.callStackSymbols.contains { $0.contains("SERVICING_THE_MAIN_DISPATCH_QUEUE") }
-            print("VIDIAG t=\(String(format: "%.3f", ProcessInfo.processInfo.systemUptime)) schedule line=\(line) delay=\(delay) insideMainQueueDrain=\(inDrain)")
-        }
-        MainRunLoop.schedule(after: delay) { [weak self] in
+        DispatchQueue.main.asyncAfter(deadline: .now() + delay) { [weak self] in
             MainActor.assumeIsolated {
-                guard let self, self.callbacks[line] != nil else {
-                    print("VIDIAG t=\(String(format: "%.3f", ProcessInfo.processInfo.systemUptime)) deliver line=\(line) skip (consumed or released) attempts=\(attempts)")
-                    return
-                }
-                print("VIDIAG t=\(String(format: "%.3f", ProcessInfo.processInfo.systemUptime)) deliver line=\(line) send attempt=\(201 - attempts)")
+                guard let self, self.callbacks[line] != nil else { return }
                 self.notice.send(line)
                 if attempts > 1 {
                     self.deliverNotice(line, after: 0.05, attempts: attempts - 1)
@@ -212,16 +202,13 @@ private extension InspectionEmissary {
             // Counted synchronously, because several notices can be delivered
             // before the first scheduled inspection gets to run.
             MainActor.assumeIsolated { PendingInspections.begin(emissary) }
-            print("VIDIAG t=\(String(format: "%.3f", ProcessInfo.processInfo.systemUptime)) callback invoked line=\(line)")
             Task { @MainActor in
-                print("VIDIAG t=\(String(format: "%.3f", ProcessInfo.processInfo.systemUptime)) task start line=\(line)")
                 do {
                     try await inspection(view)
                 } catch {
                     XCTFail("\(error.localizedDescription)", file: file, line: line)
                 }
                 let isLastPending = PendingInspections.end(emissary)
-                print("VIDIAG t=\(String(format: "%.3f", ProcessInfo.processInfo.systemUptime)) task end line=\(line) last=\(isLastPending) callbacks=\(self.callbacks.keys.sorted())")
                 if self.callbacks.isEmpty && isLastPending {
                     ViewHosting.expel(function: function)
                 }
@@ -250,18 +237,6 @@ private extension InspectionEmissary {
                 deliverNotice(line, after: 0)
             }
         }
-    }
-}
-
-/// Schedules work on the main run loop with a timer.
-///
-/// Work enqueued with `DispatchQueue.main` from within other main-thread work could stay
-/// pending while `XCTestCase.wait(for:)` spins the run loop, until the wait timed out.
-/// A timer is a run loop source, so firing it reliably wakes the waiting run loop.
-internal enum MainRunLoop {
-    static func schedule(after delay: TimeInterval = 0, _ work: @escaping () -> Void) {
-        let timer = Timer(timeInterval: max(0, delay), repeats: false) { _ in work() }
-        RunLoop.main.add(timer, forMode: .common)
     }
 }
 
