@@ -37,7 +37,11 @@ jobs:
               if m and start is not None:
                   print('=====', m.group(1), '| previous test:', prev)
                   for x in lines[start:i+1]:
-                      if 'VIDIAG' in x or 'error:' in x: print(x[:220])
+                      if 'VIDIAG' in x or 'error:' in x: print(x[:300])
+                  print('----- after failure (until next test start)')
+                  for x in lines[i+1:i+400]:
+                      if re.search(r"Test Case '.*' started", x): break
+                      if 'VIDIAG' in x: print(x[:300])
           print('===== insideMainQueueDrain counts')
           import collections
           c=collections.Counter(re.sub(r'.*(VIDIAG \w+).*insideMainQueueDrain=(\w+).*', r'\1 \2', l) for l in lines if 'insideMainQueueDrain=' in l)
