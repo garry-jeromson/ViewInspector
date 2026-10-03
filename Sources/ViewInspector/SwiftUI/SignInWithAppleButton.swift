@@ -61,7 +61,10 @@ public extension InspectableView where View == ViewType.SignInWithAppleButton {
     @available(tvOS 15.0, *)
     func tap(_ outcome: ViewType.SignInWithAppleButton.SignInOutcome) throws {
         let button = try buttonSurrogate()
+        let inDrain = Thread.callStackSymbols.contains { $0.contains("SERVICING_THE_MAIN_DISPATCH_QUEUE") }
+        print("VIDIAG signInTap insideMainQueueDrain=\(inDrain)")
         DispatchQueue.main.async {
+            print("VIDIAG signInTap main.async fired")
             let request = ASAuthorizationAppleIDProvider().createRequest()
             button.onRequest(request)
             let result: Result<ASAuthorization, Error>

@@ -185,6 +185,10 @@ private extension InspectionEmissary {
     /// Sends the notice for the inspection at `line`. A view that hasn't rendered yet isn't
     /// subscribed to `notice` and would miss it, so it's re-sent until the callback is consumed.
     nonisolated func deliverNotice(_ line: UInt, after delay: TimeInterval, attempts: Int = 200) {
+        if attempts == 200 {
+            let inDrain = Thread.callStackSymbols.contains { $0.contains("SERVICING_THE_MAIN_DISPATCH_QUEUE") }
+            print("VIDIAG schedule line=\(line) delay=\(delay) insideMainQueueDrain=\(inDrain)")
+        }
         DispatchQueue.main.asyncAfter(deadline: .now() + delay) { [weak self] in
             MainActor.assumeIsolated {
                 guard let self, self.callbacks[line] != nil else {

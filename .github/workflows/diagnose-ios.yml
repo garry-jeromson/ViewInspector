@@ -6,20 +6,24 @@ on:
 
 jobs:
   diagnose:
-    name: iOS full-suite diagnostics
+    name: iOS full-suite diagnostics (${{ matrix.copy }})
     runs-on: macos-26
+    strategy:
+      fail-fast: false
+      matrix:
+        copy: [a, b]
     env:
       TEST_RUNNER_VIEWINSPECTOR_TEST_TIMEOUT_SCALE: 10
     steps:
       - uses: actions/checkout@v4
       - name: Toolchain
         run: sudo xcode-select -s "$(ls -d /Applications/Xcode_*.app | sort -V | tail -1)"
-      - name: Run full suite 2x with logging
+      - name: Run full suite with logging
         run: |
           DEST=$(xcrun simctl list devices available -j | python3 -c "import json,sys; d=json.load(sys.stdin)['devices']; print(next(x['udid'] for k,v in sorted(d.items(), reverse=True) if 'iOS' in k for x in v if x['name'].startswith('iPhone')))")
           xcodebuild build-for-testing -project ViewInspector.xcodeproj -scheme ViewInspector-Package -destination "id=$DEST" -quiet
           xcodebuild test-without-building -project ViewInspector.xcodeproj -scheme ViewInspector-Package \
-            -destination "id=$DEST" -test-iterations 2 > test.log 2>&1 || true
+            -destination "id=$DEST" > test.log 2>&1 || true
           grep -E "Executed [0-9]+ tests" test.log | tail -1
           python3 - <<'PY'
           import re
@@ -34,4 +38,8 @@ jobs:
                   print('=====', m.group(1), '| previous test:', prev)
                   for x in lines[start:i+1]:
                       if 'VIDIAG' in x or 'error:' in x: print(x[:220])
+          print('===== insideMainQueueDrain counts')
+          import collections
+          c=collections.Counter(re.sub(r'.*(VIDIAG \w+).*insideMainQueueDrain=(\w+).*', r'\1 \2', l) for l in lines if 'insideMainQueueDrain=' in l)
+          for k,v in sorted(c.items()): print(v, k)
           PY
