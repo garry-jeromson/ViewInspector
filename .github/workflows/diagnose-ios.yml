@@ -8,6 +8,7 @@ jobs:
   diagnose:
     name: iOS full-suite diagnostics (${{ matrix.copy }})
     runs-on: macos-26
+    timeout-minutes: 30
     strategy:
       fail-fast: false
       matrix:
@@ -23,7 +24,8 @@ jobs:
           DEST=$(xcrun simctl list devices available -j | python3 -c "import json,sys; d=json.load(sys.stdin)['devices']; print(next(x['udid'] for k,v in sorted(d.items(), reverse=True) if 'iOS' in k for x in v if x['name'].startswith('iPhone')))")
           xcodebuild build-for-testing -project ViewInspector.xcodeproj -scheme ViewInspector-Package -destination "id=$DEST" -quiet
           xcodebuild test-without-building -project ViewInspector.xcodeproj -scheme ViewInspector-Package \
-            -destination "id=$DEST" > test.log 2>&1 || true
+            -destination "id=$DEST" -test-timeouts-enabled YES -default-test-execution-time-allowance 60 \
+            2>&1 | tee test.log | grep --line-buffered -E "Test Case .* (started|failed)|Test Suite .* started|timed out|Restarting|crash" || true
           grep -E "Executed [0-9]+ tests" test.log | tail -1
           python3 - <<'PY'
           import re
