@@ -11,7 +11,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        copy: [a, b]
+        copy: [a, b, c]
     env:
       TEST_RUNNER_VIEWINSPECTOR_TEST_TIMEOUT_SCALE: 10
     steps:

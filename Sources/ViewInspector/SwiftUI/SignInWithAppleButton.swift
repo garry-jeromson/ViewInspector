@@ -63,7 +63,7 @@ public extension InspectableView where View == ViewType.SignInWithAppleButton {
         let button = try buttonSurrogate()
         let inDrain = Thread.callStackSymbols.contains { $0.contains("SERVICING_THE_MAIN_DISPATCH_QUEUE") }
         print("VIDIAG t=\(String(format: "%.3f", ProcessInfo.processInfo.systemUptime)) signInTap insideMainQueueDrain=\(inDrain)")
-        DispatchQueue.main.async {
+        MainRunLoop.schedule {
             print("VIDIAG t=\(String(format: "%.3f", ProcessInfo.processInfo.systemUptime)) signInTap main.async fired")
             let request = ASAuthorizationAppleIDProvider().createRequest()
             button.onRequest(request)
@@ -85,7 +85,7 @@ public extension InspectableView where View == ViewType.SignInWithAppleButton {
                 result = .failure(error)
             }
             print("VIDIAG t=\(String(format: "%.3f", ProcessInfo.processInfo.systemUptime)) signInTap scheduling completion")
-            DispatchQueue.main.async {
+            MainRunLoop.schedule {
                 print("VIDIAG t=\(String(format: "%.3f", ProcessInfo.processInfo.systemUptime)) signInTap completion fired")
                 button.onCompletion(result)
             }

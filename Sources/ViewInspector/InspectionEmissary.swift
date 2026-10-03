@@ -188,15 +188,8 @@ private extension InspectionEmissary {
         if attempts == 200 {
             let inDrain = Thread.callStackSymbols.contains { $0.contains("SERVICING_THE_MAIN_DISPATCH_QUEUE") }
             print("VIDIAG t=\(String(format: "%.3f", ProcessInfo.processInfo.systemUptime)) schedule line=\(line) delay=\(delay) insideMainQueueDrain=\(inDrain)")
-            let started = ProcessInfo.processInfo.systemUptime
-            let timer = Timer(timeInterval: 0.1, repeats: true) { timer in
-                let now = ProcessInfo.processInfo.systemUptime
-                print("VIDIAG t=\(String(format: "%.3f", now)) heartbeat line=\(line)")
-                if now - started > 1.5 { timer.invalidate() }
-            }
-            RunLoop.main.add(timer, forMode: .common)
         }
-        DispatchQueue.main.asyncAfter(deadline: .now() + delay) { [weak self] in
+        MainRunLoop.schedule(after: delay) { [weak self] in
             MainActor.assumeIsolated {
                 guard let self, self.callbacks[line] != nil else {
                     print("VIDIAG t=\(String(format: "%.3f", ProcessInfo.processInfo.systemUptime)) deliver line=\(line) skip (consumed or released) attempts=\(attempts)")
@@ -257,6 +250,18 @@ private extension InspectionEmissary {
                 deliverNotice(line, after: 0)
             }
         }
+    }
+}
+
+/// Schedules work on the main run loop with a timer.
+///
+/// Work enqueued with `DispatchQueue.main` from within other main-thread work could stay
+/// pending while `XCTestCase.wait(for:)` spins the run loop, until the wait timed out.
+/// A timer is a run loop source, so firing it reliably wakes the waiting run loop.
+internal enum MainRunLoop {
+    static func schedule(after delay: TimeInterval = 0, _ work: @escaping () -> Void) {
+        let timer = Timer(timeInterval: max(0, delay), repeats: false) { _ in work() }
+        RunLoop.main.add(timer, forMode: .common)
     }
 }
 
